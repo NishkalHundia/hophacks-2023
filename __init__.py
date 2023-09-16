@@ -118,7 +118,8 @@ def scan_check():
             s.append(x[0])
 
     try:
-        return jsonify(find_drugs(s, is_ignore_case=True)[0][0]["name"])
+        rxuid = requests.get("https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + s[0] + "&search=1").json()['idGroup']['rxnormId'][0]
+        return jsonify(find_drugs(s, is_ignore_case=True)[0][0]["name"], )
     except:
         return "No drug found"
 
@@ -130,7 +131,8 @@ def manual_check():
     drug.append(request.args.get("drug"))
 
     try:
-        return find_drugs(drug, is_ignore_case=True)[0][0]["name"]
+        rxuid = requests.get("https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug[0] + "&search=1").json()['idGroup']['rxnormId'][0]
+        return jsonify(find_drugs(drug, is_ignore_case=True)[0][0]["name"])
     except:
         return "No drug found"
 
@@ -216,14 +218,5 @@ def get_user_info():
     userid = request.args.get("userid")
     info = userinfo.query.filter_by(user_id=userid).first()
     return info
-
-# POST for getting the drug id, idk why is this here, seems useless to me
-@app.route("/drug_id", methods=["POST"])
-def drug_id():
-
-    drug = request.args.get("drug")
-
-    #return the rx number
-    return requests.get("https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug + "&search=1").json()['idGroup']['rxnormId'][0]
 
 app.run(debug=True)
