@@ -1,5 +1,6 @@
 from flask import Flask, redirect
 from flask import request
+from flask import jsonify
 import matplotlib.pyplot as plt
 import keras_ocr
 from drug_named_entity_recognition import find_drugs
@@ -116,7 +117,7 @@ def scan_check():
             s.append(x[0])
 
     try:
-        return find_drugs(s, is_ignore_case=True)[0][0]["name"]
+        return jsonify(find_drugs(s, is_ignore_case=True)[0][0]["name"])
     except:
         return "No drug found"
 
