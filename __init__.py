@@ -22,39 +22,39 @@ login_manager.init_app(app)
 db = SQLAlchemy(app)
 
 class usertable(UserMixin, db.Model):
-    user_id = db.column(db.Integer, primary_key=True)
-    name = db.column(db.String(32), nullable=False)
+    user_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
 
 class userinfo(UserMixin, db.Model):
-    info_id = db.column(db.Integer, primary_key=True)
-    user_id = db.column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
-    first_name = db.column(db.String(32), nullable=False)
-    last_name = db.column(db.String(32), nullable=False)
-    height = db.column(db.Integer)
-    weight = db.column(db.Integer)
-    date_of_birth = db.column(db.DateTime, nullable=False)
+    info_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    first_name = db.Column(db.String(32), nullable=False)
+    last_name = db.Column(db.String(32), nullable=False)
+    height = db.Column(db.Integer)
+    weight = db.Column(db.Integer)
+    date_of_birth = db.Column(db.DateTime, nullable=False)
 
 class userstaff(UserMixin, db.Model):
-    staff_id = db.column(db.Integer, primary_key=True)
-    user_id = db.column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
-    nurse_id = db.column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
-    doctor_id = db.column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    staff_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    nurse_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
 
 class userpwd(UserMixin, db.Model):
-    pwd_id = db.column(db.Integer, primary_key=True)
-    user_id = db.column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
-    password = db.column(db.String(128), nullable=False)
+    pwd_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    password = db.Column(db.String(128), nullable=False)
 
 class prescription(UserMixin, db.Model):
-    prescription_id = db.column(db.Integer, primary_key=True)
-    user_id = db.column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
-    nurse_id = db.column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
-    drug_name = db.column(db.String(64), nullable=False)
-    drug_description = db.column(db.String(512))
-    drug_power = db.column(db.Integer, nullable=False)
-    drug_days = db.column(db.String(16), nullable=False)
-    drug_time = db.column(db.String(16), nullable=False)
-    expiry = db.column(db.DateTime, nullable=False)
+    prescription_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    nurse_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    drug_name = db.Column(db.String(64), nullable=False)
+    drug_description = db.Column(db.String(512))
+    drug_power = db.Column(db.Integer, nullable=False)
+    drug_days = db.Column(db.String(16), nullable=False)
+    drug_time = db.Column(db.String(16), nullable=False)
+    expiry = db.Column(db.DateTime, nullable=False)
 
 def create_app():
 
@@ -66,15 +66,15 @@ def create_app():
     # POST for registering
     @app.route("/register", methods=["POST"])
     def register():
-        name = request.form.get("name")
-        password = request.form.get("password")
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
-        height = request.form.get("height")
-        weight = request.form.get("weight")
-        date_of_birth = request.form.get("date_of_birth")
-        nurse_id = request.form.get("nurse_id")
-        doctor_id = request.form.get("doctor_id")
+        name = request.args.get("name")
+        password = request.args.get("password")
+        first_name = request.args.get("first_name")
+        last_name = request.args.get("last_name")
+        height = request.args.get("height")
+        weight = request.args.get("weight")
+        date_of_birth = request.args.get("date_of_birth")
+        nurse_id = request.args.get("nurse_id")
+        doctor_id = request.args.get("doctor_id")
         user = usertable(name=name)
         db.session.add(user)
         db.session.commit()
@@ -92,8 +92,8 @@ def create_app():
     # POST for logging in
     @app.route("/login", methods=["POST"])
     def login():
-        name = request.form.get("name")
-        password = request.form.get("password")
+        name = request.args.get("name")
+        password = request.args.get("password")
         user = usertable.query.filter_by(name=name).first()
         if user is None:
             return "User does not exist"
@@ -124,7 +124,7 @@ def create_app():
     def manual_check():
 
         drug = []
-        drug.append(request.form.get("drug"))
+        drug.append(request.args.get("drug"))
 
         try:
             return find_drugs(drug, is_ignore_case=True)[0][0]["name"]
@@ -133,20 +133,20 @@ def create_app():
 
     @app.route("/check_compatibility", methods=["GET"])
     def check_compatibility():
-        drug = request.form.get("drug")
+        drug = request.args.get("drug")
         #TODO: I fucking dont know how what why the fuck are we using flask bro
 
     @app.route("/add", methods=["POST"])
     def add():
-        drug = request.form.get("drug")
+        drug = request.args.get("drug")
 
     # POST for getting the drug id, idk why is this here, seems useless to me
     @app.route("/drug_id", methods=["POST"])
     def drug_id():
 
-        drug = request.form.get("drug")
+        drug = request.args.get("drug")
 
         #return the rx number
         return requests.get("https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug + "&search=1").json()['idGroup']['rxnormId'][0]
 
-    return app
+    app.run(debug=True)
