@@ -9,6 +9,8 @@ from datetime import datetime
 
 SECRET_KEY = "emergencymeeting"
 
+#DONT TOUCH THE CODE IF YOURE READING THIS, IM STILL NOT DONE
+
 pipeline = keras_ocr.pipeline.Pipeline()
 
 app = Flask(__name__)
