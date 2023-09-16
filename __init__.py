@@ -101,7 +101,8 @@ def login():
     if userpwd.password != password:
         return "Incorrect password"
     login_user(user)
-    return str(user.user_id)
+    nurse_id = userstaff.query.filter_by(user_id=user.user_id).first().nurse_id
+    return str(user.user_id) + "/" + str(nurse_id)
 
 # POST for image recognition
 @app.route("/scan_check", methods=["POST"])
@@ -136,14 +137,84 @@ def manual_check():
     except:
         return "No drug found"
 
+# GET for compatibility check
 @app.route("/check_compatibility", methods=["GET"])
 def check_compatibility():
     drug = request.args.get("drug")
-    #TODO: I fucking dont know how what why the fuck are we using flask bro
+    userid = request.args.get("userid")
+    #get all the current prescriptions from the prescription table using the user id
+    medicines = prescription.query.filter_by(user_id=userid).all()
+    incompatible = []
+    for medicine in medicines:
+        if medicine.drug_name == drug:
+            return "false"
+        else :
+            #TODO: check if the drug is compatible with the current prescriptions
 
+            if len(incompatible) == 0:
+                return "false"
+            else:
+                #TODO: return the incompatible drugs
+                return ""
+
+# POST for adding a prescription
 @app.route("/add", methods=["POST"])
 def add():
     drug = request.args.get("drug")
+    userid = request.args.get("userid")
+    nurseid = request.args.get("nurseid")
+    description = request.args.get("description")
+    power = request.args.get("power")
+    days = request.args.get("days")
+    time = request.args.get("time")
+    expiry = request.args.get("expiry")
+    prescription = prescription(user_id=userid, nurse_id=nurseid, drug_name=drug, drug_description=description, drug_power=power, drug_days=days, drug_time=time, expiry=expiry)
+    db.session.add(prescription)
+    db.session.commit()
+    return "true"
+
+# POST for removing a prescription
+@app.route("/remove", methods=["POST"])
+def remove():
+    prescription_id = request.args.get("prescription_id")
+    prescription = prescription.query.filter_by(prescription_id=prescription_id).first()
+    db.session.delete(prescription)
+    db.session.commit()
+    return "true"
+
+# POST for getting the prescriptions
+@app.route("/get", methods=["POST"])
+def get_prescriptions():
+    userid = request.args.get("userid")
+    prescriptions = prescription.query.filter_by(user_id=userid).all()
+    return prescriptions
+
+# POST for updating the prescriptions
+@app.route("/update", methods=["POST"])
+def update():
+    prescription_id = request.args.get("prescription_id")
+    drug = request.args.get("drug")
+    description = request.args.get("description")
+    power = request.args.get("power")
+    days = request.args.get("days")
+    time = request.args.get("time")
+    expiry = request.args.get("expiry")
+    prescription = prescription.query.filter_by(prescription_id=prescription_id).first()
+    prescription.drug_name = drug
+    prescription.drug_description = description
+    prescription.drug_power = power
+    prescription.drug_days = days
+    prescription.drug_time = time
+    prescription.expiry = expiry
+    db.session.commit()
+    return "true"
+
+# POST for getting user info
+@app.route("/get_user_info", methods=["POST"])
+def get_user_info():
+    userid = request.args.get("userid")
+    info = userinfo.query.filter_by(user_id=userid).first()
+    return info
 
 # POST for getting the drug id, idk why is this here, seems useless to me
 @app.route("/drug_id", methods=["POST"])
