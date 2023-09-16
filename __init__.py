@@ -7,7 +7,6 @@ import requests
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from PIL import Image
 
 SECRET_KEY = "emergencymeeting"
 
@@ -107,13 +106,9 @@ def login():
 # POST for image recognition
 @app.route("/scan_check", methods=["POST"])
 def scan_check():
-    file = request.files['image']
-    img = Image.open(file.stream)
-    plt.imshow(img)
-    plt.show()
+    file = request.files['Medicineimage']
 
-    img = keras_ocr.tools.read(img)
-    prediction_groups = pipeline.recognize([img])
+    prediction_groups = pipeline.recognize([file])
 
     s = []
     for predictions in prediction_groups:
@@ -225,4 +220,4 @@ def drug_id():
     #return the rx number
     return requests.get("https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug + "&search=1").json()['idGroup']['rxnormId'][0]
 
-app.run(debug=False)
+app.run(debug=True)
