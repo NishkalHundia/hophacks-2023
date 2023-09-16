@@ -1,4 +1,5 @@
-from flask import Flask, redirect, request
+from flask import Flask, redirect
+from flask import request
 import matplotlib.pyplot as plt
 import keras_ocr
 from drug_named_entity_recognition import find_drugs
@@ -6,6 +7,7 @@ import requests
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from PIL import Image
 
 SECRET_KEY = "emergencymeeting"
 
@@ -104,10 +106,15 @@ def login():
 # POST for image recognition
 @app.route("/scan_check", methods=["POST"])
 def scan_check():
-    image = Flask.request.files.get("medicineImage", "")
-    prediction_groups = pipeline.recognize(image)
-    s = []
+    file = request.files['image']
+    img = Image.open(file.stream)
+    plt.imshow(img)
+    plt.show()
 
+    img = keras_ocr.tools.read(img)
+    prediction_groups = pipeline.recognize([img])
+
+    s = []
     for predictions in prediction_groups:
         for x in predictions:
             s.append(x[0])
