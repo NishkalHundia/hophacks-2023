@@ -119,7 +119,7 @@ def scan_check():
 
     try:
         rxuid = requests.get("https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + s[0] + "&search=1").json()['idGroup']['rxnormId'][0]
-        return jsonify(find_drugs(s, is_ignore_case=True)[0][0]["name"], )
+        return jsonify(find_drugs(s, is_ignore_case=True)[0][0]["name"], rxuid)
     except:
         return "No drug found"
 
@@ -132,7 +132,7 @@ def manual_check():
 
     try:
         rxuid = requests.get("https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug[0] + "&search=1").json()['idGroup']['rxnormId'][0]
-        return jsonify(find_drugs(drug, is_ignore_case=True)[0][0]["name"])
+        return jsonify(find_drugs(drug, is_ignore_case=True)[0][0]["name"], rxuid)
     except:
         return "No drug found"
 

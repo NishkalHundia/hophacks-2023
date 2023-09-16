@@ -54,21 +54,23 @@ cur = conn.cursor()
 
 #------------------------
 
-userid = 4
-nurseid = 1
-rxcuid = 161
-drugname = "Paracetamol"
-drugdescription = "never gonna let you down"
-drugpower = 100
-drugdays = "daily"
-drugtime = "every 6 hours"
-expiry = datetime.date(2023, 7, 2)
+# userid = 4
+# nurseid = 1
+# rxcuid = 161
+# drugname = "Paracetamol"
+# drugdescription = "never gonna let you down"
+# drugpower = 100
+# drugdays = "daily"
+# drugtime = "every 6 hours"
+# expiry = datetime.date(2023, 7, 2)
 
-cur.execute("INSERT INTO prescription (user_id, nurse_id, rxcuid, drug_name, drug_description, drug_power, drug_days, drug_time, expiry) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (userid, nurseid, rxcuid, drugname, drugdescription, drugpower, drugdays, drugtime, expiry))
-conn.commit()
-result = cur.execute("SELECT * FROM prescription WHERE user_id = %s", (userid,))
-result = cur.fetchone()
-print(result)
+# cur.execute("INSERT INTO prescription (user_id, nurse_id, rxcuid, drug_name, drug_description, drug_power, drug_days, drug_time, expiry) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (userid, nurseid, rxcuid, drugname, drugdescription, drugpower, drugdays, drugtime, expiry))
+# conn.commit()
+# result = cur.execute("SELECT * FROM prescription WHERE user_id = %s", (userid,))
+# result = cur.fetchone()
+# print(result)
+
+
 
 cur.close()
 conn.close()
