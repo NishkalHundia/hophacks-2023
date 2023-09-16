@@ -8,17 +8,15 @@ import requests
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-SECRET_KEY = "emergencymeeting"
+import psycopg2
 
 #DONT TOUCH THE CODE IF YOURE READING THIS, IM STILL NOT DONE
 
 pipeline = keras_ocr.pipeline.Pipeline()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/hophacks'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ubuntu:0912@localhost/hophacks'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = SECRET_KEY
 login_manager = LoginManager()
 login_manager.init_app(app)
 db = SQLAlchemy(app)
@@ -73,7 +71,7 @@ def register():
     last_name = request.args.get("last_name")
     height = request.args.get("height")
     weight = request.args.get("weight")
-    date_of_birth = request.args.get("date_of_birth")
+    date_of_birth = datetime.strptime(request.args.get("date_of_birth"), '%Y-%m-%d')
     nurse_id = request.args.get("nurse_id")
     doctor_id = request.args.get("doctor_id")
     user = usertable(name=name)
@@ -81,14 +79,14 @@ def register():
     db.session.commit()
     user = usertable.query.filter_by(name=name).first()
     user_id = user.user_id
-    userpwd = userpwd(user_id=user_id, password=password)
-    userinfo = userinfo(user_id=user_id, first_name=first_name, last_name=last_name, height=height, weight=weight, date_of_birth=date_of_birth)
-    userstaff = userstaff(user_id=user_id, nurse_id=nurse_id, doctor_id=doctor_id)
-    db.session.add(userpwd)
-    db.session.add(userinfo)
-    db.session.add(userstaff)
+    user_pwd = userpwd(user_id=user_id, password=password)
+    user_info = userinfo(user_id=user_id, first_name=first_name, last_name=last_name, height=height, weight=weight, date_of_birth=date_of_birth)
+    user_staff = userstaff(user_id=user_id, nurse_id=nurse_id, doctor_id=doctor_id)
+    db.session.add(user_pwd)
+    db.session.add(user_info)
+    db.session.add(user_staff)
     db.session.commit()
-    return redirect("/login")
+    return "successful"
 
 # POST for logging in
 @app.route("/login", methods=["POST"])
@@ -98,8 +96,8 @@ def login():
     user = usertable.query.filter_by(name=name).first()
     if user is None:
         return "User does not exist"
-    userpwd = userpwd.query.filter_by(user_id=user.user_id).first()
-    if userpwd.password != password:
+    userpwd_ = userpwd.query.filter_by(user_id=user.user_id).first()
+    if userpwd_.password != password:
         return "Incorrect password"
     login_user(user)
     nurse_id = userstaff.query.filter_by(user_id=user.user_id).first().nurse_id
@@ -169,8 +167,8 @@ def add():
     days = request.args.get("days")
     time = request.args.get("time")
     expiry = request.args.get("expiry")
-    prescription = prescription(user_id=userid, nurse_id=nurseid, rxcuid=rxcuid,drug_name=drug, drug_description=description, drug_power=power, drug_days=days, drug_time=time, expiry=expiry)
-    db.session.add(prescription)
+    prescription_ = prescription(user_id=userid, nurse_id=nurseid, rxcuid=rxcuid,drug_name=drug, drug_description=description, drug_power=power, drug_days=days, drug_time=time, expiry=expiry)
+    db.session.add(prescription_)
     db.session.commit()
     return "true"
 
@@ -178,8 +176,8 @@ def add():
 @app.route("/remove", methods=["POST"])
 def remove():
     prescription_id = request.args.get("prescription_id")
-    prescription = prescription.query.filter_by(prescription_id=prescription_id).first()
-    db.session.delete(prescription)
+    prescription_ = prescription.query.filter_by(prescription_id=prescription_id).first()
+    db.session.delete(prescription_)
     db.session.commit()
     return "true"
 
@@ -201,14 +199,14 @@ def update():
     time = request.args.get("time")
     expiry = request.args.get("expiry")
     rxcuid = request.args.get("rxcuid")
-    prescription = prescription.query.filter_by(prescription_id=prescription_id).first()
-    prescription.drug_name = drug
-    prescription.drug_description = description
-    prescription.drug_power = power
-    prescription.drug_days = days
-    prescription.drug_time = time
-    prescription.expiry = expiry
-    prescription.rxcuid = rxcuid
+    prescription_ = prescription.query.filter_by(prescription_id=prescription_id).first()
+    prescription_.drug_name = drug
+    prescription_.drug_description = description
+    prescription_.drug_power = power
+    prescription_.drug_days = days
+    prescription_.drug_time = time
+    prescription_.expiry = expiry
+    prescription_.rxcuid = rxcuid
     db.session.commit()
     return "true"
 
