@@ -146,12 +146,13 @@ def check_compatibility():
             return "false"
         else :
             #TODO: check if the drug is compatible with the current prescriptions
-
-            if len(incompatible) == 0:
-                return "false"
-            else:
-                #TODO: return the incompatible drugs
-                return ""
+            compatibility_data = requests.get("https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=" + medicine.drug_name + "+" + drug).json()
+            incompatible.append(compatibility_data)
+    if len(incompatible) == 0:
+        return "false"
+    else:
+        #TODO: return the incompatible drugs
+        return ""
 
 # POST for adding a prescription
 @app.route("/add", methods=["POST"])
