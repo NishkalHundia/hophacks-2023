@@ -51,6 +51,7 @@ class prescription(UserMixin, db.Model):
     prescription_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
     nurse_id = db.Column(db.Integer, db.ForeignKey('usertable.user_id'), nullable=False)
+    rxcuid = db.Column(db.Integer, nullable=False)
     drug_name = db.Column(db.String(64), nullable=False)
     drug_description = db.Column(db.String(512))
     drug_power = db.Column(db.Integer, nullable=False)
@@ -159,12 +160,13 @@ def add():
     drug = request.args.get("drug")
     userid = request.args.get("userid")
     nurseid = request.args.get("nurseid")
+    rxcuid = request.args.get("rxcuid")
     description = request.args.get("description")
     power = request.args.get("power")
     days = request.args.get("days")
     time = request.args.get("time")
     expiry = request.args.get("expiry")
-    prescription = prescription(user_id=userid, nurse_id=nurseid, drug_name=drug, drug_description=description, drug_power=power, drug_days=days, drug_time=time, expiry=expiry)
+    prescription = prescription(user_id=userid, nurse_id=nurseid, rxcuid=rxcuid,drug_name=drug, drug_description=description, drug_power=power, drug_days=days, drug_time=time, expiry=expiry)
     db.session.add(prescription)
     db.session.commit()
     return "true"
@@ -195,6 +197,7 @@ def update():
     days = request.args.get("days")
     time = request.args.get("time")
     expiry = request.args.get("expiry")
+    rxcuid = request.args.get("rxcuid")
     prescription = prescription.query.filter_by(prescription_id=prescription_id).first()
     prescription.drug_name = drug
     prescription.drug_description = description
@@ -202,6 +205,7 @@ def update():
     prescription.drug_days = days
     prescription.drug_time = time
     prescription.expiry = expiry
+    prescription.rxcuid = rxcuid
     db.session.commit()
     return "true"
 
