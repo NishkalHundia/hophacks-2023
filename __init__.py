@@ -136,6 +136,10 @@ def create_app():
         drug = request.form.get("drug")
         #TODO: I fucking dont know how what why the fuck are we using flask bro
 
+    @app.route("/add", methods=["POST"])
+    def add():
+        drug = request.form.get("drug")
+
     # POST for getting the drug id, idk why is this here, seems useless to me
     @app.route("/drug_id", methods=["POST"])
     def drug_id():
