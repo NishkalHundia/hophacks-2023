@@ -15,7 +15,9 @@ def index():
         s = []
         for predictions in prediction_groups:
             for x in predictions:
-                s.append(x[0])     
+                s.append(x[0]) 
+
+            
         return find_drugs(s, is_ignore_case=True)[0][0]['name']
 
     return 0
