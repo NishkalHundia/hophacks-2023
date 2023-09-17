@@ -1,4 +1,4 @@
-# hophacks-2023
+# hophacks-2023 - Medi Mingle
 
 This is the backend
 
