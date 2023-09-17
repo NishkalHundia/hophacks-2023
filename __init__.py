@@ -145,14 +145,16 @@ def scan_check():
     for predictions in prediction_groups:
         for x in predictions:
             s.append(x[0])
+    print(s)
 
     try:
+        drug_name = find_drugs(s, is_ignore_case=True)[0][0]["name"]
         rxuid = requests.get(
-            "https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + s[0] + "&search=1"
+            "https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug_name + "&search=1"
         ).json()["idGroup"]["rxnormId"][0]
-        return jsonify(find_drugs(s, is_ignore_case=True)[0][0]["name"], rxuid)
+        return jsonify({"result" : drug_name, "rxuid" : rxuid})
     except:
-        return "No drug found"
+        return jsonify({"result": "false"})
 
 
 # POST for manual input
@@ -165,9 +167,9 @@ def manual_check():
         rxuid = requests.get(
             "https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug[0] + "&search=1"
         ).json()["idGroup"]["rxnormId"][0]
-        return jsonify(find_drugs(drug, is_ignore_case=True)[0][0]["name"], rxuid)
+        return jsonify({"result" : find_drugs(drug, is_ignore_case=True)[0][0]["name"], "rxuid" : rxuid})
     except:
-        return "No drug found"
+        return jsonify({"result": "false"})
 
 
 # GET for compatibility check
@@ -267,6 +269,7 @@ def get_prescriptions():
     userid = request.args.get("userid")
     try:
         prescriptions = prescription.query.filter_by(user_id=userid).all()
+        print(prescriptions)
         if len(prescriptions) == 0:
             return jsonify({"response": "false"})
         prescription_list = []
