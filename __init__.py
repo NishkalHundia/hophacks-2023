@@ -125,13 +125,13 @@ def login():
     pwd = request.args.get("password")
     user = usertable.query.filter_by(name=name).first()
     if user is None:
-        return "User does not exist"
+        return jsonify({"result": "User does not exist"})
     userpwd_ = userpwd.query.filter_by(user_id=user.user_id).first()
     if userpwd_.pwd != pwd:
-        return "Incorrect password"
+        return jsonify({"result": "Incorrect password"})
     login_user(user)
     nurse_id = userstaff.query.filter_by(user_id=user.user_id).first().nurse_id
-    return str(user.user_id) + "-" + str(nurse_id)
+    return jsonify({"result": "true", "userid": user.user_id, "nurseid": nurse_id})
 
 
 # POST for image recognition
