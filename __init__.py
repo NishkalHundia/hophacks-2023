@@ -152,7 +152,7 @@ def scan_check():
         rxuid = requests.get(
             "https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug_name + "&search=1"
         ).json()["idGroup"]["rxnormId"][0]
-        return jsonify({"result" : drug_name, "rxuid" : rxuid})
+        return jsonify({"result": drug_name, "rxuid": rxuid})
     except:
         return jsonify({"result": "false"})
 
@@ -167,7 +167,12 @@ def manual_check():
         rxuid = requests.get(
             "https://rxnav.nlm.nih.gov/REST/rxcui.json?name=" + drug[0] + "&search=1"
         ).json()["idGroup"]["rxnormId"][0]
-        return jsonify({"result" : find_drugs(drug, is_ignore_case=True)[0][0]["name"], "rxuid" : rxuid})
+        return jsonify(
+            {
+                "result": find_drugs(drug, is_ignore_case=True)[0][0]["name"],
+                "rxuid": rxuid,
+            }
+        )
     except:
         return jsonify({"result": "false"})
 
@@ -285,8 +290,8 @@ def get_prescriptions():
                     "expiry": prescription_.expiry,
                     "rxcuid": prescription_.rxcuid,
                     "prescription_id": prescription_.prescription_id,
-                }   
-        )
+                }
+            )
         return jsonify(prescription_list)
     except:
         return jsonify({"response": "false"})
@@ -331,5 +336,6 @@ def get_user_info():
         "dateofbirth": info.dateofbirth,
     }
     return jsonify(toret)
+
 
 app.run(debug=True)
