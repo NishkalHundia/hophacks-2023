@@ -180,7 +180,7 @@ def check_compatibility():
 
     incompatible = []
     for medicine in medicines:
-        description = {'Interaction': '', 'Risk': ''}
+        description = {"Interaction": "", "Risk": ""}
         if medicine.rxcuid == drug_id:
             incompatible.append("Same drug.")
 
@@ -198,22 +198,20 @@ def check_compatibility():
                 description["Interaction"] = "No interaction found."
                 description["Risk"] = "None/Unknown"
             else:
-                description["Interaction"] =  compatibility_data["fullInteractionTypeGroup"][0][
-                    "fullInteractionType"
-                ][0]["interactionPair"][0]["description"]
+                description["Interaction"] = compatibility_data[
+                    "fullInteractionTypeGroup"
+                ][0]["fullInteractionType"][0]["interactionPair"][0]["description"]
                 if (
                     compatibility_data["fullInteractionTypeGroup"][0][
                         "fullInteractionType"
                     ][0]["interactionPair"][0]["severity"]
                     != "N/A"
                 ):
-                    description['Risk'] = (
-                        compatibility_data["fullInteractionTypeGroup"][0][
-                            "fullInteractionType"
-                        ][0]["interactionPair"][0]["severity"]
-                    )
+                    description["Risk"] = compatibility_data[
+                        "fullInteractionTypeGroup"
+                    ][0]["fullInteractionType"][0]["interactionPair"][0]["severity"]
                 else:
-                    description['Risk'] = "Mild/Moderate"
+                    description["Risk"] = "Mild/Moderate"
 
             incompatible.append(description)
 
@@ -316,7 +314,7 @@ def update():
 def get_user_info():
     userid = request.args.get("userid")
     info = userinfo.query.filter_by(user_id=userid).first()
-    #turn info into json object without jsonify
+    # turn info into json object without jsonify
     toret = {
         "firstname": info.firstname,
         "lastname": info.lastname,
@@ -325,5 +323,5 @@ def get_user_info():
         "dateofbirth": info.dateofbirth,
     }
     return jsonify(toret)
-        
+
 app.run(debug=True)
