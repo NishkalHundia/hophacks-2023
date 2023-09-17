@@ -180,6 +180,7 @@ def check_compatibility():
 
     incompatible = []
     for medicine in medicines:
+        description = {'Interaction': '', 'Risk': ''}
         if medicine.rxcuid == drug_id:
             incompatible.append("Same drug.")
 
@@ -194,9 +195,10 @@ def check_compatibility():
             compatibility_data = requests.get(url).json()
 
             if "fullInteractionTypeGroup" not in compatibility_data.keys():
-                description = "No interaction found.\nRisk: None/Unknown\n"
+                description["Interaction"] = "No interaction found."
+                description["Risk"] = "None/Unknown"
             else:
-                description = compatibility_data["fullInteractionTypeGroup"][0][
+                description["Interaction"] =  compatibility_data["fullInteractionTypeGroup"][0][
                     "fullInteractionType"
                 ][0]["interactionPair"][0]["description"]
                 if (
@@ -205,15 +207,13 @@ def check_compatibility():
                     ][0]["interactionPair"][0]["severity"]
                     != "N/A"
                 ):
-                    description += (
-                        "\nRisk: "
-                        + compatibility_data["fullInteractionTypeGroup"][0][
+                    description['Risk'] = (
+                        compatibility_data["fullInteractionTypeGroup"][0][
                             "fullInteractionType"
                         ][0]["interactionPair"][0]["severity"]
-                        + "\n"
                     )
                 else:
-                    description += "\nRisk: Mild/Moderate\n"
+                    description['Risk'] = "Mild/Moderate"
 
             incompatible.append(description)
 
