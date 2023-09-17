@@ -51,7 +51,7 @@ cur = conn.cursor()
 # result = cur.execute("SELECT * FROM userpwd")
 # result = cur.fetchall()
 # print(result)
-result = cur.execute("SELECT * FROM prescription")
+result = cur.execute("SELECT * FROM prescription WHERE user_id = 2")
 result = cur.fetchall()
 print(result)
 

@@ -233,7 +233,7 @@ def check_compatibility():
 def add():
     drug = request.args.get("drug")
     userid = request.args.get("userid")
-    nurseid = userstaff.query.filter_by(user_id=userid).first().nurse_id
+    nurseid = int(userstaff.query.filter_by(user_id=userid).first().nurse_id)
     rxcuid = request.args.get("rxcuid")
     description = request.args.get("description")
     power = request.args.get("power")
