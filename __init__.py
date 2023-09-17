@@ -187,7 +187,7 @@ def check_compatibility():
 
     incompatible = []
     for medicine in medicines:
-        description = {"Interaction": "", "Risk": ""}
+        description = {"Name": medicine.drug_name, "Interaction": "", "Risk": ""}
         if medicine.rxcuid == drug_id:
             incompatible.append("Same drug.")
 
