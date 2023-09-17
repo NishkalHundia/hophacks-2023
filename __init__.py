@@ -268,11 +268,12 @@ def get_prescriptions():
     try:
         prescriptions = prescription.query.filter_by(user_id=userid).all()
         if len(prescriptions) == 0:
-            return "No prescriptions found"
+            return jsonify({"response": "false"})
         prescription_list = []
         for prescription_ in prescriptions:
             prescription_list.append(
                 {
+                    "response": "true",
                     "drug": prescription_.drug_name,
                     "description": prescription_.drug_description,
                     "power": prescription_.drug_power,
@@ -285,7 +286,7 @@ def get_prescriptions():
         )
         return jsonify(prescription_list)
     except:
-        return "No prescriptions found"
+        return jsonify({"response": "false"})
 
 
 # POST for updating the prescriptions
