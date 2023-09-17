@@ -265,23 +265,27 @@ def remove():
 @app.route("/get", methods=["GET"])
 def get_prescriptions():
     userid = request.args.get("userid")
-    prescriptions = prescription.query.filter_by(user_id=userid).all()
-    # for each prescription, get the drug name, description, power, days, time, expiry, rxcuid and prescription id then return as json
-    prescription_list = []
-    for prescription_ in prescriptions:
-        prescription_list.append(
-            {
-                "drug": prescription_.drug_name,
-                "description": prescription_.drug_description,
-                "power": prescription_.drug_power,
-                "days": prescription_.drug_days,
-                "time": prescription_.drug_time,
-                "expiry": prescription_.expiry,
-                "rxcuid": prescription_.rxcuid,
-                "prescription_id": prescription_.prescription_id,
-            }
+    try:
+        prescriptions = prescription.query.filter_by(user_id=userid).all()
+        if len(prescriptions) == 0:
+            return "No prescriptions found"
+        prescription_list = []
+        for prescription_ in prescriptions:
+            prescription_list.append(
+                {
+                    "drug": prescription_.drug_name,
+                    "description": prescription_.drug_description,
+                    "power": prescription_.drug_power,
+                    "days": prescription_.drug_days,
+                    "time": prescription_.drug_time,
+                    "expiry": prescription_.expiry,
+                    "rxcuid": prescription_.rxcuid,
+                    "prescription_id": prescription_.prescription_id,
+                }   
         )
-    return jsonify(prescription_list)
+        return jsonify(prescription_list)
+    except:
+        return "No prescriptions found"
 
 
 # POST for updating the prescriptions
